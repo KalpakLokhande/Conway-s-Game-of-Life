@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: "Nunito Sans", sans-serif;
 }
 body{
     width: 100%;
@@ -37,7 +37,7 @@ button{
     height: 45px;
     background-color: salmon;
     border-radius: 10px;
-    color: whitesmoke;
+    color: black;
     border: 0px;
     font-size: 16px;
 

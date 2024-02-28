@@ -1,17 +1,19 @@
 const canvas = document.getElementById("canvas")
 
-canvas.width = 500;
-canvas.height = 500;
+canvas.width = 1200;
+canvas.height = 650;
 
 const ctx = canvas.getContext("2d")
 let cellSize = 25
-let a;
+let intervalID;
 
 const strt = document.getElementById("start")
 const stp = document.getElementById("stop")
+const reset = document.getElementById("reset")
 
 
 const createGrid = () => {
+//This function Returns an Empty Grid
 
     let arr = []
 
@@ -31,6 +33,7 @@ const createGrid = () => {
 
 const drawGrid = (grid) => {
 
+
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     for (let i = 0; i < grid.length; i++) {
@@ -39,7 +42,7 @@ const drawGrid = (grid) => {
 
             ctx.save()
             ctx.fillStyle = 'rgb(54,159,255)'
-            ctx.fillStyle = 'yellowGreen'
+            // ctx.fillStyle = 'yellowGreen'
             ctx.strokeStyle = 'darkGray'
             ctx.globalAlpha = 0.4
             ctx.lineWidth = 0.5
@@ -80,6 +83,9 @@ const getNeighbours = (k, l) => {
 
 }
 
+
+
+
 canvas.onmousedown = (e) => {
 
     for (let i = 0; i < Grid.length; i++) {
@@ -101,28 +107,28 @@ canvas.onmousedown = (e) => {
 
 const animate = () => {
 
-    a = setInterval(() => {
+    intervalID = setInterval(() => {
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        // ctx.clearRect(0, 0, canvas.width, canvas.height)
+        let next = createGrid()
 
         drawGrid(Grid)
 
-        console.log('s')
         for (let i = 0; i < Grid.length; i++) {
 
             for (let j = 0; j < Grid[i].length; j++) {
 
-                let check = []
+                let check = 0
                 let n = getNeighbours(i, j)
 
                 for (let k = 0; k < n.length; k++) {
 
-                    if (n[k].state) check.push(n[k])
+                    if (n[k].state) check++
 
                 }
 
-                if (!Grid[i][j].state && check.length == 3) next[i][j].state = true
-                else if (Grid[i][j].state && (check.length == 2 || check.length == 3)) next[i][j].state = true
+                if (!Grid[i][j].state && check === 3) next[i][j].state = true
+                else if (Grid[i][j].state && (check === 2 || check === 3)) next[i][j].state = true
                 else next[i][j].state = false
 
             }
@@ -131,12 +137,16 @@ const animate = () => {
 
         Grid = next
 
-    }, 500)
+    }, 250)
 }
 
 let Grid = createGrid()
-let next = createGrid()
 drawGrid(Grid)
 
 strt.onclick = animate
-stp.onclick = () => clearInterval(a)
+stp.onclick = () => clearInterval(intervalID)
+reset.onclick = () => {
+    clearInterval(intervalID)
+    Grid = createGrid()
+    drawGrid(Grid)
+}
