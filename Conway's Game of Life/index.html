@@ -15,17 +15,24 @@
 
 <body>
 
-    <canvas id="canvas"></canvas>
-    <div id="btnContainer">
+    <canvas id="canvas">
+    </canvas>
+    <div id="options-bar">
 
-        <button id="start">Start</button>
-        <button id="stop">Stop</button>
+        <button id="start">Play</button>
+        <button id="stop">Pause</button>
         <button id="reset">Reset</button>
 
-
+        <select name="Select A Model" id="modelList">
+            <option> None </option>
+            <option> Pulsar</option>
+            <option> Quasar</option>
+            <option> Glider</option>
+            <option> Glider Gun</option>
+        </select>
     </div>
 
-    <script src="main.js"></script>
+    <script src="main.js" type="module"></script>
 
 </body>
 

@@ -1,19 +1,41 @@
+import * as gliderModel from './Assets/Glider.json' assert{type: "json"}
+import * as pulsarModel from './Assets/Pulsar.json' assert{type: "json"}
+import * as gliderGunModel from './Assets/GliderGun.json' assert{type: "json"}
+import * as quasarModel from './Assets/Qasar.json' assert{type: "json"}
+
+
 const canvas = document.getElementById("canvas")
 
-canvas.width = 1200;
-canvas.height = 650;
+canvas.width = window.innerWidth - 10;
+canvas.height = window.innerHeight - 10;
 
 const ctx = canvas.getContext("2d")
-let cellSize = 25
+let cellSize = 20
 let intervalID;
+let Grid = createGrid()
 
 const strt = document.getElementById("start")
 const stp = document.getElementById("stop")
 const reset = document.getElementById("reset")
+const model = document.getElementById('modelList')
 
+let pulsar = { name: 'Pulsar', model: pulsarModel.default, cellSize: 20 }
+let glider = { name: 'Glider', model: gliderModel.default, cellSize: 20 }
+let quasar = { name: 'Quasar', model: quasarModel.default, cellSize: 15 }
+let gliderGun = { name: 'Glider Gun', model: gliderGunModel.default, cellSize: 20 }
+let none = { name: 'None', model: createGrid(), cellSize: 20 }
+const models = [pulsar, quasar, glider, gliderGun, none]
 
-const createGrid = () => {
-//This function Returns an Empty Grid
+model.onchange = (e) => {
+
+    let currentModel = models.find(model => model.name === e.target.value)
+    Grid = currentModel.model
+    cellSize = currentModel.cellSize
+    drawGrid(Grid)
+
+}
+
+function createGrid() {
 
     let arr = []
 
@@ -31,8 +53,7 @@ const createGrid = () => {
     return arr
 }
 
-const drawGrid = (grid) => {
-
+const drawGrid = (grid, fillOpacity, strokOpacity = 0.2) => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -42,16 +63,21 @@ const drawGrid = (grid) => {
 
             ctx.save()
             ctx.fillStyle = 'rgb(54,159,255)'
-            // ctx.fillStyle = 'yellowGreen'
             ctx.strokeStyle = 'darkGray'
-            ctx.globalAlpha = 0.4
+            ctx.globalAlpha = strokOpacity
             ctx.lineWidth = 0.5
             ctx.beginPath()
             ctx.strokeRect(Grid[i][j].x, Grid[i][j].y, cellSize, cellSize)
+            ctx.restore()
 
+            ctx.save()
             ctx.beginPath()
-            ctx.globalAlpha = 1
-            if (Grid[i][j].state) ctx.fillRect(Grid[i][j].x, Grid[i][j].y, cellSize, cellSize)
+            ctx.fillStyle = 'yellowGreen'
+            ctx.globalAlpha = fillOpacity
+            if (Grid[i][j].state) {
+                ctx.fillRect(Grid[i][j].x, Grid[i][j].y, cellSize, cellSize)
+                ctx.strokeRect(Grid[i][j].x, Grid[i][j].y, cellSize, cellSize)
+            }
             ctx.restore()
 
         }
@@ -83,9 +109,6 @@ const getNeighbours = (k, l) => {
 
 }
 
-
-
-
 canvas.onmousedown = (e) => {
 
     for (let i = 0; i < Grid.length; i++) {
@@ -109,10 +132,11 @@ const animate = () => {
 
     intervalID = setInterval(() => {
 
-        // ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
         let next = createGrid()
 
-        drawGrid(Grid)
+        drawGrid(Grid, 1, 0.2)
 
         for (let i = 0; i < Grid.length; i++) {
 
@@ -123,7 +147,9 @@ const animate = () => {
 
                 for (let k = 0; k < n.length; k++) {
 
-                    if (n[k].state) check++
+                    if (n[k].state) {
+                        check++
+                    }
 
                 }
 
@@ -137,13 +163,12 @@ const animate = () => {
 
         Grid = next
 
-    }, 250)
+    }, 180)
 }
 
-let Grid = createGrid()
 drawGrid(Grid)
 
-strt.onclick = animate
+strt.onclick = () => animate()
 stp.onclick = () => clearInterval(intervalID)
 reset.onclick = () => {
     clearInterval(intervalID)
